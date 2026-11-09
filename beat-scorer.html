@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Beat Scorer Reel</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+  /* Layout: a 9:16 stage for screen recording. Headline, outlet pool, one outlet being judged, manual vs Claude, call to action. Single light look by choice. */
+  :root {
+    --ground: #dfe5ee;
+    --paper: #f7f9fc;
+    --ink: #101828;
+    --muted: #5b6677;
+    --line: #d5dce7;
+    --accent: #3b4cca;
+    --accent-soft: #e4e8fb;
+    --yes: #12805c;
+    --yes-soft: #d9f1e8;
+    --no: #8a94a6;
+    --no-soft: #e8ecf2;
+    --warn: #b4540a;
+    --font-display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+    --font-text: Inter, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font-text);
+    font-size: 15px;
+    padding-block: 16px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    display: grid; justify-items: center; gap: 14px;
+  }
+  .stage {
+    container-type: inline-size;
+    width: min(100%, 460px);
+    aspect-ratio: 9 / 16;
+    background: var(--paper);
+    border-radius: 3cqw;
+    box-shadow: 0 12px 40px rgba(16, 24, 40, .18);
+    padding: 5.5cqw 5cqw 5cqw;
+    display: flex; flex-direction: column; gap: 3cqw;
+    overflow: hidden;
+  }
+  .eyebrow { font-size: 2.9cqw; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 1.6cqw; }
+  .eyebrow::before { content: ""; width: 2cqw; height: 2cqw; border-radius: 50%; background: var(--accent); }
+  h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 8.4cqw; line-height: 1.04; letter-spacing: -.02em; text-wrap: balance; }
+  h1 mark { background: var(--accent-soft); color: var(--accent); padding: 0 1.6cqw; border-radius: 1.4cqw; }
+  .sub { margin: 0; font-size: 3.3cqw; color: var(--muted); }
+  .sub b { color: var(--ink); font-weight: 600; }
+
+  .card { background: #fff; border: .3cqw solid var(--line); border-radius: 3cqw; padding: 3.4cqw; }
+  .card h2 { margin: 0 0 2.4cqw; font-size: 3.1cqw; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
+  .card h2 em { font-style: normal; font-weight: 500; font-size: 2.7cqw; color: var(--muted); }
+
+  .pool { display: flex; justify-content: space-between; }
+  .chip { display: grid; justify-items: center; gap: 1cqw; width: 12.5cqw; }
+  .chip i {
+    width: 9.6cqw; height: 9.6cqw; border-radius: 50%; display: grid; place-items: center;
+    font-style: normal; font-weight: 600; font-size: 3.4cqw;
+    background: var(--no-soft); color: var(--no);
+    transition: background .3s, color .3s, transform .3s;
+  }
+  .chip span { font-size: 2.3cqw; font-weight: 600; color: var(--no); text-transform: uppercase; letter-spacing: .04em; transition: color .3s; }
+  .chip.now i { outline: .5cqw solid var(--accent); outline-offset: .4cqw; color: var(--accent); background: var(--accent-soft); }
+  .chip.visit i { background: var(--yes-soft); color: var(--yes); }
+  .chip.visit span { color: var(--yes); }
+  .chip.skip i { background: var(--no-soft); color: var(--no); }
+
+  .judge { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .who { display: flex; align-items: center; gap: 3cqw; padding-bottom: 2.4cqw; border-bottom: .3cqw solid var(--line); margin-bottom: 1.6cqw; }
+  .who .av { width: 10cqw; height: 10cqw; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 4cqw; flex: none; }
+  .who div { min-width: 0; line-height: 1.25; }
+  .who strong { display: block; font-size: 3.9cqw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .who small { color: var(--muted); font-size: 2.9cqw; }
+  .who .count { margin-left: auto; font-size: 2.7cqw; color: var(--muted); font-variant-numeric: tabular-nums; flex: none; }
+
+  .qs { display: grid; gap: 0; flex: 1; align-content: space-between; }
+  .q { display: grid; grid-template-columns: 5cqw 1fr 9.5cqw; align-items: center; gap: 2cqw; font-size: 3cqw; opacity: .35; transition: opacity .25s; }
+  .q.shown { opacity: 1; }
+  .q .n { width: 4.4cqw; height: 4.4cqw; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-size: 2.5cqw; font-weight: 700; display: grid; place-items: center; }
+  .q .t { color: var(--ink); min-width: 0; }
+  .q .a { font-size: 2.6cqw; font-weight: 700; text-align: center; padding: .5cqw 0; border-radius: 1.2cqw; background: var(--no-soft); color: var(--no); visibility: hidden; transform: scale(.8); transition: transform .25s cubic-bezier(.3,1.5,.5,1); }
+  .q.shown .a { visibility: visible; transform: scale(1); }
+  .q.shown .a.y { background: var(--yes-soft); color: var(--yes); }
+
+  .fit { margin-top: 2.2cqw; padding-top: 2.4cqw; border-top: .3cqw solid var(--line); display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 2.4cqw; }
+  .fit b { font-size: 3cqw; }
+  .bar { height: 2cqw; border-radius: 1cqw; background: var(--no-soft); position: relative; }
+  .bar i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 1cqw; background: var(--accent); }
+  .bar::after { content: ""; position: absolute; left: 80%; top: -1cqw; bottom: -1cqw; width: .35cqw; background: var(--ink); opacity: .55; }
+  .score { font-family: var(--font-display); font-weight: 700; font-size: 6cqw; min-width: 9cqw; text-align: right; font-variant-numeric: tabular-nums; }
+  .verdict { font-size: 2.7cqw; font-weight: 700; padding: 1cqw 2cqw; border-radius: 1.4cqw; background: var(--no-soft); color: var(--no); white-space: nowrap; min-width: 17cqw; text-align: center; }
+  .verdict.v { background: var(--yes-soft); color: var(--yes); }
+
+  .vs { display: grid; grid-template-columns: 1fr 1fr; gap: 2.4cqw; }
+  .vs .card { padding: 3cqw; }
+  .vs h3 { margin: 0 0 1.4cqw; font-size: 2.6cqw; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  .vs .claude h3 { color: var(--accent); }
+  .vs ul { margin: 0; padding-left: 3.6cqw; font-size: 2.7cqw; line-height: 1.4; color: var(--ink); }
+  .vs li + li { margin-top: .5cqw; }
+  .vs .claude { background: var(--accent-soft); border-color: transparent; }
+
+  .cta { background: var(--ink); color: #fff; border-radius: 2.6cqw; padding: 3.2cqw; text-align: center; font-weight: 600; font-size: 3.6cqw; }
+  .cta b { color: #ffd27a; }
+
+  .tools { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; max-width: 460px; width: 100%; }
+  .tools button { font: inherit; font-weight: 600; background: var(--ink); color: #fff; border: 0; border-radius: 10px; padding: 10px 18px; cursor: pointer; }
+  .tools button.alt { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .tools button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .note { margin: 0; color: var(--muted); font-size: 13px; text-align: center; max-width: 460px; text-wrap: pretty; }
+
+  @media (prefers-reduced-motion: reduce) { .q, .q .a, .chip i { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+  <div class="eyebrow">Beat planning · Panipat route</div>
+  <h1>Claude plans the beat. <mark>Every outlet</mark> scored.</h1>
+  <p class="sub">Seven yes/no questions per retailer, <b>before</b> the team leaves the depot.</p>
+
+  <div class="card">
+    <h2>Reading the route <em id="poolCount">0 of 8 scored</em></h2>
+    <div class="pool" id="pool"></div>
+  </div>
+
+  <div class="card judge">
+    <h2>Judging now <em>score 80+ gets a visit</em></h2>
+    <div class="who">
+      <div class="av" id="av">–</div>
+      <div><strong id="oName">–</strong><small id="oType">–</small></div>
+      <span class="count" id="oCount">1 / 8</span>
+    </div>
+    <div class="qs" id="qs"></div>
+    <div class="fit">
+      <b>Fit</b>
+      <div class="bar"><i id="barFill"></i></div>
+      <span class="score" id="score">0</span>
+      <span class="verdict" id="verdict">scoring…</span>
+    </div>
+  </div>
+
+  <div class="vs">
+    <div class="card">
+      <h3>The old way</h3>
+      <ul><li>Salesman picks outlets by habit</li><li>Overdue shops get missed</li><li>Planning takes an hour</li></ul>
+    </div>
+    <div class="card claude">
+      <h3>With Claude</h3>
+      <ul><li>Reads last 30 days of billing</li><li>Scores all 8 outlets in seconds</li><li>Hands you a ranked visit list</li></ul>
+    </div>
+  </div>
+
+  <div class="cta">Want the sheet? Comment <b>"BEAT"</b></div>
+</div>
+
+<div class="tools">
+  <button id="replay" type="button">Replay</button>
+  <button id="pause" class="alt" type="button">Pause</button>
+</div>
+<p class="note">Example outlets and numbers for the demo. Edit the OUTLETS list at the top of the script to use your own, then screen-record this page.</p>
+
+<script>
+  // ---- edit this block to change the story ----
+  var QUESTIONS = [
+    { t: 'Billed in the last 30 days?',        w: 15 },
+    { t: 'Collection on time?',                w: 15 },
+    { t: 'Open scheme to push?',               w: 10 },
+    { t: 'Top 5 SKUs short on shelf?',         w: 20 },
+    { t: 'Visit overdue (over 14 days)?',      w: 15 },
+    { t: 'Monthly potential above ₹50k?', w: 15 },
+    { t: 'Rival display nearby?',              w: 10 }
+  ];
+  var OUTLETS = [
+    { n: 'Sharma General Store', k: 'Kirana · Model Town',        a: [1,1,1,1,1,1,0] },
+    { n: 'Gupta Provision',      k: 'Kirana · Sector 11',         a: [1,0,0,0,0,1,1] },
+    { n: 'Mehra Wholesale',      k: 'Wholesaler · Grain Market',  a: [1,1,1,1,1,1,1] },
+    { n: 'City Mart',            k: 'Modern trade · GT Road',     a: [0,1,0,1,1,0,0] },
+    { n: 'Jain Karyana',         k: 'Kirana · Subhash Nagar',     a: [1,1,0,1,1,0,1] },
+    { n: 'Rana Traders',         k: 'Semi-wholesale · Old Bus Stand', a: [1,0,1,0,1,1,0] },
+    { n: 'Singh Super Shop',     k: 'Kirana · Industrial Area',   a: [1,1,1,1,0,1,1] },
+    { n: 'Verma Stores',         k: 'Kirana · Railway Road',      a: [0,0,0,1,0,0,0] }
+  ];
+  var CUT = 80, STEP = 260;
+  // ---------------------------------------------
+
+  var $ = function (id) { return document.getElementById(id); };
+  var pool = $('pool'), qs = $('qs'), runId = 0, paused = false, pauseWaiters = [];
+
+  OUTLETS.forEach(function (o, i) {
+    o.s = 0; QUESTIONS.forEach(function (q, j) { if (o.a[j]) o.s += q.w; });
+    var c = document.createElement('div'); c.className = 'chip';
+    c.innerHTML = '<i>' + o.n.charAt(0) + '</i><span>&nbsp;</span>';
+    pool.appendChild(c);
+  });
+  QUESTIONS.forEach(function (q, j) {
+    var r = document.createElement('div'); r.className = 'q';
+    r.innerHTML = '<span class="n">' + (j + 1) + '</span><span class="t">' + q.t + '</span><span class="a"></span>';
+    qs.appendChild(r);
+  });
+  var chips = pool.children, rows = qs.children;
+
+  function wait(ms, id) {
+    return new Promise(function (res) {
+      setTimeout(function () {
+        if (id !== runId) return res(false);
+        if (!paused) return res(true);
+        pauseWaiters.push(function () { res(id === runId); });
+      }, ms);
+    });
+  }
+
+  function resetAll() {
+    Array.prototype.forEach.call(chips, function (c) { c.className = 'chip'; c.lastChild.innerHTML = '&nbsp;'; });
+    $('poolCount').textContent = '0 of ' + OUTLETS.length + ' scored';
+  }
+  function resetCard() {
+    Array.prototype.forEach.call(rows, function (r) { r.classList.remove('shown'); });
+    $('barFill').style.transition = 'none'; $('barFill').style.width = '0';
+    $('score').textContent = '0'; $('verdict').textContent = 'scoring…'; $('verdict').className = 'verdict';
+  }
+
+  async function play() {
+    var id = ++runId;
+    resetAll();
+    for (var i = 0; i < OUTLETS.length; i++) {
+      var o = OUTLETS[i];
+      resetCard();
+      Array.prototype.forEach.call(chips, function (c) { c.classList.remove('now'); });
+      chips[i].classList.add('now');
+      $('av').textContent = o.n.charAt(0); $('oName').textContent = o.n; $('oType').textContent = o.k;
+      $('oCount').textContent = (i + 1) + ' / ' + OUTLETS.length;
+      if (!await wait(350, id)) return;
+
+      var running = 0;
+      for (var j = 0; j < QUESTIONS.length; j++) {
+        var yes = !!o.a[j], a = rows[j].querySelector('.a');
+        a.textContent = yes ? 'Yes' : 'No'; a.className = 'a' + (yes ? ' y' : '');
+        rows[j].classList.add('shown');
+        if (yes) running += QUESTIONS[j].w;
+        $('score').textContent = running;
+        $('barFill').style.transition = 'width .25s ease'; $('barFill').style.width = running + '%';
+        if (!await wait(STEP, id)) return;
+      }
+      var go = o.s >= CUT;
+      $('verdict').textContent = go ? 'Visit today' : 'Skip';
+      $('verdict').className = 'verdict' + (go ? ' v' : '');
+      chips[i].classList.remove('now'); chips[i].classList.add(go ? 'visit' : 'skip');
+      chips[i].lastChild.textContent = go ? 'visit' : 'skip';
+      $('poolCount').textContent = (i + 1) + ' of ' + OUTLETS.length + ' scored';
+      if (!await wait(900, id)) return;
+    }
+    if (!await wait(1200, id)) return;
+    play();
+  }
+
+  $('replay').addEventListener('click', function () { paused = false; $('pause').textContent = 'Pause'; pauseWaiters = []; play(); });
+  $('pause').addEventListener('click', function () {
+    paused = !paused; $('pause').textContent = paused ? 'Resume' : 'Pause';
+    if (!paused) { var w = pauseWaiters; pauseWaiters = []; w.forEach(function (f) { f(); }); }
+  });
+  play();
+</script>
+</body>
+</html>

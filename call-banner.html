@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Incoming Call Banner</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+  /* Layout: one phone, centred, with a small control strip beneath it. The phone is sized in container units so every part scales together. */
+  :root {
+    --bg: #0e1116;
+    --fg: #e9edf3;
+    --muted: #8b94a3;
+    --panel: #171b22;
+    --line: #262c36;
+    --island: #000000;
+    --ring-green: #30d158;
+    --decline: #ff453a;
+    --accent: #30d158;
+    --font-display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+    --font-text: Inter, -apple-system, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-text);
+    font-size: 15px;
+    line-height: 1.5;
+    padding-block: 32px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    min-height: 100vh;
+  }
+  main {
+    max-width: 440px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+  }
+  header { text-align: center; display: grid; gap: 6px; }
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(24px, 6vw, 30px);
+    letter-spacing: -0.01em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  header p { margin: 0; color: var(--muted); text-wrap: balance; }
+
+  /* ---------- phone ---------- */
+  .phone {
+    container-type: inline-size;
+    width: min(320px, 100%);
+    aspect-ratio: 390 / 800;
+    border-radius: 15cqw;
+    padding: 2.2cqw;
+    background: linear-gradient(160deg, #3a404b, #14171c 40%, #2b3038);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55), inset 0 0 0 0.4cqw #4a515d;
+  }
+  .phone.shake { animation: buzz 0.5s linear infinite; }
+  @keyframes buzz {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-0.7px) rotate(-0.15deg); }
+    40% { transform: translateX(0.7px) rotate(0.15deg); }
+    60% { transform: translateX(-0.5px); }
+    80% { transform: translateX(0.5px); }
+  }
+  .screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 12.8cqw;
+    overflow: hidden;
+    background:
+      radial-gradient(120% 60% at 20% 0%, #5b4a7a 0%, transparent 60%),
+      radial-gradient(100% 70% at 90% 100%, #1f5f6b 0%, transparent 60%),
+      linear-gradient(180deg, #2a2f42, #171a26);
+    color: #fff;
+    isolation: isolate;
+  }
+
+  .status {
+    position: absolute; inset: 4.6cqw 8cqw auto 8cqw;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 4cqw; font-weight: 600;
+    z-index: 1;
+    transition: opacity 0.3s;
+  }
+  .screen[data-state="ring"] .status { opacity: 0; }
+  .bars { display: flex; gap: 0.7cqw; align-items: flex-end; }
+  .bars i { display: block; width: 1cqw; background: #fff; border-radius: 0.3cqw; }
+  .bars i:nth-child(1) { height: 1.6cqw; } .bars i:nth-child(2) { height: 2.4cqw; }
+  .bars i:nth-child(3) { height: 3.2cqw; } .bars i:nth-child(4) { height: 4cqw; }
+  .batt { width: 6.4cqw; height: 3.2cqw; border: 0.35cqw solid rgba(255,255,255,.6); border-radius: 1cqw; padding: 0.35cqw; }
+  .batt b { display: block; height: 100%; width: 78%; background: #fff; border-radius: 0.5cqw; }
+  .right { display: flex; gap: 1.6cqw; align-items: center; }
+
+  /* home content behind the banner */
+  .home { position: absolute; inset: 0; padding: 22cqw 7cqw 0; display: grid; align-content: start; gap: 6cqw; }
+  .clock { text-align: center; }
+  .clock small { display: block; font-size: 4cqw; opacity: .8; }
+  .clock strong { font-family: var(--font-display); font-weight: 500; font-size: 17cqw; line-height: 1; letter-spacing: -0.02em; }
+  .widget {
+    background: rgba(255,255,255,.14);
+    backdrop-filter: blur(3cqw);
+    -webkit-backdrop-filter: blur(3cqw);
+    border-radius: 6cqw;
+    padding: 4.5cqw 5cqw;
+    display: grid; gap: 1.4cqw;
+  }
+  .widget span { font-size: 3.2cqw; text-transform: uppercase; letter-spacing: .08em; opacity: .7; }
+  .widget b { font-size: 4.6cqw; font-weight: 600; }
+  .widget em { font-style: normal; font-size: 3.6cqw; opacity: .8; }
+  .dock {
+    position: absolute; left: 4cqw; right: 4cqw; bottom: 6.5cqw;
+    height: 19cqw; border-radius: 8cqw;
+    background: rgba(255,255,255,.18);
+    backdrop-filter: blur(3cqw);
+    -webkit-backdrop-filter: blur(3cqw);
+    display: flex; justify-content: space-around; align-items: center;
+  }
+  .dock i { width: 13cqw; height: 13cqw; border-radius: 3.6cqw; background: rgba(255,255,255,.28); }
+  .dock i:nth-child(2) { background: #30d158; }
+  .dock i:nth-child(3) { background: #0a84ff; }
+  .grab { position: absolute; bottom: 2cqw; left: 50%; width: 34cqw; height: 1.2cqw; margin-left: -17cqw; border-radius: 1cqw; background: rgba(255,255,255,.85); }
+
+  .dim { position: absolute; inset: 0; background: rgba(0,0,0,.28); opacity: 0; transition: opacity .5s; z-index: 2; }
+  .screen[data-state="ring"] .dim { opacity: 1; }
+
+  /* ---------- the island ---------- */
+  .island {
+    --ease: cubic-bezier(.22, 1.1, .3, 1);
+    position: absolute; z-index: 5;
+    top: 3.2cqw; left: 50%;
+    width: 30cqw; height: 8.8cqw;
+    transform: translateX(-50%);
+    background: var(--island);
+    border-radius: 4.4cqw;
+    overflow: hidden;
+    transition: width .65s var(--ease), height .65s var(--ease), border-radius .65s var(--ease), box-shadow .4s;
+  }
+  .screen[data-state="ring"] .island {
+    width: 92cqw; height: 22cqw; border-radius: 9cqw;
+    box-shadow: 0 0 0 0.35cqw rgba(48,209,88,.55), 0 0 6cqw rgba(48,209,88,.35);
+    animation: glow 1.6s ease-in-out infinite;
+  }
+  @keyframes glow {
+    50% { box-shadow: 0 0 0 0.35cqw rgba(48,209,88,.25), 0 0 3cqw rgba(48,209,88,.15); }
+  }
+  .screen[data-state="call"] .island { width: 46cqw; height: 8.8cqw; border-radius: 4.4cqw; }
+
+  .layer { position: absolute; inset: 0; display: flex; align-items: center; opacity: 0; pointer-events: none; transition: opacity .25s; }
+  .screen[data-state="ring"] .ringing { opacity: 1; pointer-events: auto; transition-delay: .25s; }
+  .screen[data-state="call"] .incall { opacity: 1; transition-delay: .3s; }
+
+  .ringing { width: 92cqw; padding: 0 3.6cqw; gap: 3.2cqw; }
+  .avatar {
+    flex: none; width: 14.5cqw; height: 14.5cqw; border-radius: 50%;
+    display: grid; place-items: center;
+    background: linear-gradient(160deg, #5a4f88, #2d2547);
+    font-family: var(--font-text); font-weight: 600; font-size: 7cqw; color: #fff;
+  }
+  .who { flex: 1; min-width: 0; line-height: 1.2; }
+  .who small { display: block; color: #9a9aa0; font-size: 4.2cqw; }
+  .who strong { display: block; font-size: 5cqw; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .acts { display: flex; gap: 3.2cqw; flex: none; }
+  .btn {
+    width: 14.5cqw; height: 14.5cqw; border-radius: 50%; border: 0; padding: 0; cursor: pointer;
+    display: grid; place-items: center; color: #fff;
+    transition: transform .15s;
+  }
+  .btn:active { transform: scale(.92); }
+  .btn:focus-visible { outline: 0.5cqw solid #fff; outline-offset: 0.5cqw; }
+  .btn svg { width: 6.8cqw; height: 6.8cqw; fill: currentColor; }
+  .btn.no { background: var(--decline); }
+  .btn.no svg { transform: rotate(135deg); }
+  .btn.yes { background: var(--ring-green); }
+
+  .incall { width: 46cqw; padding: 0 3.4cqw; justify-content: space-between; }
+  .incall .mini { width: 5.4cqw; height: 5.4cqw; border-radius: 50%; background: linear-gradient(160deg,#5a4f88,#2d2547); display: grid; place-items: center; font-size: 3cqw; font-weight: 600; }
+  .timer { color: var(--ring-green); font-size: 3.8cqw; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .wave { display: flex; gap: 0.6cqw; align-items: center; height: 4cqw; }
+  .wave i { display: block; width: 0.7cqw; height: 100%; border-radius: 1cqw; background: var(--ring-green); animation: wave 0.9s ease-in-out infinite; transform-origin: center; }
+  .wave i:nth-child(2) { animation-delay: .15s; } .wave i:nth-child(3) { animation-delay: .3s; }
+  .wave i:nth-child(4) { animation-delay: .45s; } .wave i:nth-child(5) { animation-delay: .6s; }
+  @keyframes wave { 0%,100% { transform: scaleY(.25); } 50% { transform: scaleY(1); } }
+
+  /* ---------- controls ---------- */
+  .controls {
+    width: 100%;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px;
+    display: grid; gap: 14px;
+  }
+  .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .fields label { display: grid; gap: 4px; min-width: 0; font-size: 12px; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+  .fields input {
+    width: 100%; min-width: 0;
+    background: var(--bg); color: var(--fg);
+    border: 1px solid var(--line); border-radius: 8px;
+    padding: 9px 10px; font: inherit; font-size: 15px; text-transform: none; letter-spacing: 0;
+  }
+  .fields input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .go {
+    flex: 1; min-width: 140px;
+    background: var(--accent); color: #04210d; font: inherit; font-weight: 600;
+    border: 0; border-radius: 10px; padding: 11px 16px; cursor: pointer;
+  }
+  .go.alt { background: transparent; color: var(--fg); border: 1px solid var(--line); font-weight: 500; }
+  .go:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+  .hint { margin: 0; color: var(--muted); font-size: 13px; text-wrap: pretty; }
+
+  @media (max-width: 420px) { .fields { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) {
+    .island, .layer, .dim { transition-duration: .01s; }
+    .phone.shake, .screen[data-state="ring"] .island, .wave i { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<main>
+  <header>
+    <h1>Incoming call banner</h1>
+    <p>An iPhone call notification in the Dynamic Island, built with plain HTML and CSS. Tap Accept or Decline on the phone.</p>
+  </header>
+
+  <div class="phone" id="phone" aria-label="iPhone mockup">
+    <div class="screen" id="screen" data-state="idle">
+      <div class="status" aria-hidden="true">
+        <span>9:41</span>
+        <span class="right">
+          <span class="bars"><i></i><i></i><i></i><i></i></span>
+          <span class="batt"><b></b></span>
+        </span>
+      </div>
+
+      <div class="home" aria-hidden="true">
+        <div class="clock"><small>Monday, 9 November</small><strong>9:41</strong></div>
+        <div class="widget"><span>Next up</span><b>North zone sales review</b><em>10:30 · Conference room B</em></div>
+      </div>
+      <div class="dock" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <div class="grab" aria-hidden="true"></div>
+      <div class="dim"></div>
+
+      <div class="island" id="island">
+        <div class="layer ringing">
+          <div class="avatar" id="avatar">S</div>
+          <div class="who">
+            <small id="label">mobile</small>
+            <strong id="name">Suraj Phillaur Caddy</strong>
+          </div>
+          <div class="acts">
+            <button class="btn no" id="decline" aria-label="Decline call">
+              <svg viewBox="0 0 24 24"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25c1.1.37 2.3.57 3.6.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.6 21 3 13.4 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>
+            </button>
+            <button class="btn yes" id="accept" aria-label="Accept call">
+              <svg viewBox="0 0 24 24"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25c1.1.37 2.3.57 3.6.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.6 21 3 13.4 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="layer incall">
+          <span class="mini" id="mini">S</span>
+          <span class="timer" id="timer">0:00</span>
+          <span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="controls" aria-label="Customise the call">
+    <div class="fields">
+      <label for="in-name">Caller name<input id="in-name" type="text" value="Suraj Phillaur Caddy" maxlength="28" autocomplete="off"></label>
+      <label for="in-label">Label<input id="in-label" type="text" value="mobile" maxlength="12" autocomplete="off"></label>
+    </div>
+    <div class="row">
+      <button class="go" id="replay" type="button">Ring again</button>
+      <button class="go alt" id="reset" type="button">Reset phone</button>
+    </div>
+    <p class="hint">To use this in a video, screen-record this page and drop the clip over your footage in CapCut or Premiere.</p>
+  </section>
+</main>
+
+<script>
+  var screenEl = document.getElementById('screen');
+  var phone = document.getElementById('phone');
+  var timerEl = document.getElementById('timer');
+  var nameEl = document.getElementById('name');
+  var labelEl = document.getElementById('label');
+  var avatar = document.getElementById('avatar');
+  var mini = document.getElementById('mini');
+  var inName = document.getElementById('in-name');
+  var inLabel = document.getElementById('in-label');
+  var tick = null, startT = null, auto = null;
+
+  function setState(s) {
+    screenEl.setAttribute('data-state', s);
+    phone.classList.toggle('shake', s === 'ring');
+  }
+  function applyCaller() {
+    var n = inName.value.trim() || 'Unknown';
+    nameEl.textContent = n;
+    labelEl.textContent = inLabel.value.trim() || 'mobile';
+    var ch = n.charAt(0).toUpperCase();
+    avatar.textContent = ch; mini.textContent = ch;
+  }
+  function stopTimer() { clearInterval(tick); tick = null; }
+  function ring() {
+    stopTimer(); clearTimeout(auto);
+    applyCaller();
+    setState('idle');
+    auto = setTimeout(function () { setState('ring'); }, 700);
+  }
+  function accept() {
+    setState('call');
+    var t0 = Date.now();
+    timerEl.textContent = '0:00';
+    stopTimer();
+    tick = setInterval(function () {
+      var s = Math.floor((Date.now() - t0) / 1000);
+      timerEl.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    }, 250);
+  }
+  function decline() { stopTimer(); setState('idle'); }
+
+  document.getElementById('accept').addEventListener('click', accept);
+  document.getElementById('decline').addEventListener('click', decline);
+  document.getElementById('replay').addEventListener('click', ring);
+  document.getElementById('reset').addEventListener('click', function () { clearTimeout(auto); stopTimer(); setState('idle'); });
+  inName.addEventListener('input', applyCaller);
+  inLabel.addEventListener('input', applyCaller);
+  ring();
+</script>
+</body>
+</html>

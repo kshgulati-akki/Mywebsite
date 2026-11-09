@@ -1,6 +1,6 @@
 # Mywebsite
 
-Personal profile page for Akash Gulati (Akki), FMCG sales leader based in Chandigarh.
+Freelance profile site for Akash Gulati (Akki): FMCG sales trackers, reporting automation and AI training for sales teams.
 
 Live at: https://kshgulati-akki.github.io/Mywebsite/
 
@@ -12,7 +12,7 @@ Live at: https://kshgulati-akki.github.io/Mywebsite/
 | `favicon.svg` | The small icon shown in browser tabs |
 | `og-image.png` | The preview picture shown when the link is shared on LinkedIn or WhatsApp |
 | `sitemap.xml` | A list of pages to submit to Google Search Console |
-| `fonts/` | The Overpass typeface (SIL Open Font License, see `fonts/OFL.txt`) |
+| `fonts/` | The Archivo typeface (SIL Open Font License, see `fonts/OFL.txt`) |
 
 ## Updating the page
 

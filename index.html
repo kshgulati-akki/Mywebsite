@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JobReach Dashboard</title>
+<style>
+:root{
+  --bg:#dfe7fb; --card:#fff; --ink:#0f1b3d; --muted:#6b7694; --line:#e4e9f5;
+  --blue:#1f4fe0; --blue-soft:#e6ecff; --hi:#c9d6ff; --orange:#f0532d; --green:#12a150; --green-soft:#e2f6ea;
+  --amber:#f5a524; --amber-soft:#fff3dc; --paper:#faf3e8;
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);padding:16px;line-height:1.35}
+.wrap{max-width:1040px;margin:0 auto;display:grid;gap:14px}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--blue);display:flex;gap:6px;align-items:center}
+.eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--blue);display:inline-block}
+h1{font-size:clamp(26px,5vw,44px);line-height:1.08;letter-spacing:-.02em;margin-top:8px}
+h1 mark{background:var(--hi);color:var(--ink);padding:0 6px;border-radius:4px}
+.sub{color:var(--muted);margin-top:8px;font-size:14px;max-width:60ch}
+.card{background:var(--card);border-radius:14px;padding:14px;box-shadow:0 1px 0 rgba(15,27,61,.04),0 6px 20px rgba(31,79,224,.07)}
+.card h2{font-size:11px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.composer{display:grid;gap:10px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{font-size:12px;font-weight:600;color:var(--muted);display:grid;gap:4px}
+input,textarea{font:inherit;color:var(--ink);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;background:#fbfcff;width:100%}
+input:focus,textarea:focus{outline:none;border-color:var(--blue);background:#fff}
+textarea{min-height:76px;resize:vertical}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:5px 10px;font-size:12px;cursor:pointer;color:var(--ink)}
+.chip:hover{border-color:var(--blue);color:var(--blue)}
+.btn{background:var(--blue);color:#fff;border:0;border-radius:10px;padding:12px 16px;font-weight:700;font-size:15px;cursor:pointer}
+.btn:hover{filter:brightness(1.08)} .btn:disabled{opacity:.6;cursor:default}
+.btn.ghost{background:var(--blue-soft);color:var(--blue)}
+.actions{display:flex;gap:8px}.actions .btn:first-child{flex:1}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(min-width:700px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stat .k{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted)}
+.stat .v{font-size:clamp(28px,6vw,40px);font-weight:800;letter-spacing:-.02em;color:var(--blue);font-variant-numeric:tabular-nums}
+.stat .v.g{color:var(--green)} .stat .v.o{color:var(--orange)}
+.panes{display:grid;gap:14px}
+@media(min-width:800px){.panes{grid-template-columns:1fr 1fr}}
+.dms{display:grid;gap:6px;max-height:430px;overflow:hidden;align-content:start}
+.dm{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;padding:8px;border-radius:10px;background:#f6f8ff;animation:slide .35s ease both;transition:background .3s}
+.dm.replied{background:var(--blue-soft)} .dm.booked{background:var(--green-soft)}
+@keyframes slide{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+.av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px}
+.dm b{font-size:13px;display:block}
+.dm small{color:var(--muted);font-size:11.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dm .who{min-width:0}
+.tag{font-size:10px;font-weight:700;padding:3px 8px;border-radius:99px;background:#eceff7;color:var(--muted);white-space:nowrap}
+.tag.seen{background:var(--amber-soft);color:#a56a00}.tag.replied{background:var(--blue);color:#fff}.tag.booked{background:var(--green);color:#fff}
+.cal{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.cal .h{font-size:10px;text-align:center;color:var(--muted);font-weight:700}
+.day{min-height:58px;border:1px solid var(--line);border-radius:8px;padding:3px;display:grid;gap:2px;align-content:start}
+.day .n{font-size:9.5px;color:var(--muted)}
+.slot{background:var(--blue);color:#fff;border-radius:5px;font-size:9.5px;font-weight:700;text-align:center;padding:2px 0;animation:pop .4s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:none;opacity:1}}
+.profile{display:grid;gap:14px}
+@media(min-width:800px){.profile{grid-template-columns:1fr 1fr}}
+.ba{display:grid;gap:8px}
+.ba div{border-radius:10px;padding:10px;font-size:13px}
+.ba .before{background:#f3f4f8;color:var(--muted)} .ba .after{background:var(--green-soft);border:1px solid #bfe8cf}
+.ba .tl{font-size:10px;font-weight:800;letter-spacing:.08em;display:block;margin-bottom:3px}
+.meter{display:flex;align-items:center;gap:14px}
+.ring{--p:42;width:92px;height:92px;border-radius:50%;background:conic-gradient(var(--green) calc(var(--p)*1%),#e8ecf6 0);display:grid;place-items:center;flex:none}
+.ring span{width:72px;height:72px;border-radius:50%;background:#fff;display:grid;place-items:center;font-weight:800;font-size:24px;font-variant-numeric:tabular-nums}
+.checks{display:grid;gap:5px;font-size:13px}
+.checks li{list-style:none;display:flex;gap:7px;align-items:center;color:var(--muted);transition:color .3s}
+.checks li::before{content:"";width:16px;height:16px;border-radius:50%;border:2px solid #cfd6e8;flex:none;transition:.3s}
+.checks li.on{color:var(--ink)} .checks li.on::before{background:var(--green) center/10px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.5l2.5 2.5L10 3' stroke='white' stroke-width='2' fill='none'/%3E%3C/svg%3E");border-color:var(--green)}
+.bp{background:var(--paper);border-radius:14px;padding:14px;background-image:linear-gradient(#0000000a 1px,transparent 1px),linear-gradient(90deg,#0000000a 1px,transparent 1px);background-size:18px 18px}
+.bp h2{font-size:clamp(20px,4vw,30px);letter-spacing:-.02em;text-transform:none;color:var(--ink);display:block;margin-bottom:4px}
+.bp h2 em{color:var(--orange);font-style:normal}
+.bp p{font-size:12px;color:var(--muted);margin-bottom:12px}
+.steps{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+@media(min-width:700px){.steps{grid-template-columns:repeat(4,1fr)}}
+.step{background:#fffdf8;border:1px solid #e6dccb;border-radius:8px;padding:10px;opacity:.5;transition:.4s;position:relative;min-height:110px}
+.step.on{opacity:1;border-color:var(--orange);box-shadow:0 0 0 3px #f0532d22}
+.step.done{opacity:1;border-color:#bfe8cf}
+.step .no{font-size:10px;font-weight:800;color:var(--orange);letter-spacing:.08em}
+.step b{display:block;font-size:13.5px;margin:4px 0 3px}
+.step p{font-size:11.5px;margin:0;color:var(--muted)}
+.step .st{position:absolute;right:8px;top:8px;font-size:11px;color:var(--green);opacity:0;transition:.3s}
+.step.done .st{opacity:1}
+.cta{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--blue);color:#fff;border-radius:12px;padding:14px;font-weight:700;flex-wrap:wrap}
+.cta span.k{background:#fff;color:var(--blue);padding:2px 10px;border-radius:6px;margin:0 4px}
+.cta input{width:140px;background:#ffffff22;border-color:#ffffff55;color:#fff;padding:6px 10px}
+.note{font-size:11.5px;color:var(--muted);text-align:center;padding:4px 8px 12px}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<header>
+  <div class="eyebrow"><i></i>CLAUDE · LINKEDIN · JOB SEARCH</div>
+  <h1><span id="bigN">0</span> job DMs sent.<br>Here’s <mark>what they booked.</mark></h1>
+  <p class="sub">Type one caption. Claude finds the right people on LinkedIn, upgrades your profile, writes a personal message for each person, follows up, and fills your interview calendar.</p>
+</header>
+
+<section class="card composer">
+  <h2>Your outreach</h2>
+  <div class="row2">
+    <label>Your name<input id="name" value="Rahul Sharma" autocomplete="off"></label>
+    <label>Role you want<input id="role" value="Sales Manager" autocomplete="off"></label>
+  </div>
+  <label>Caption / message
+    <textarea id="caption">Hi sir, I’m looking for a job. Do you have a vacancy in your team?</textarea>
+  </label>
+  <div class="chips" id="chips"></div>
+  <div class="actions">
+    <button class="btn" id="go">▶ Start outreach</button>
+    <button class="btn ghost" id="reset">Reset</button>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="card stat"><div class="k">DMS SENT</div><div class="v" id="sSent">0</div></div>
+  <div class="card stat"><div class="k">REPLIES</div><div class="v o" id="sRep">0</div></div>
+  <div class="card stat"><div class="k">INTERVIEWS BOOKED</div><div class="v g" id="sBook">0</div></div>
+  <div class="card stat"><div class="k">REPLY RATE</div><div class="v" id="sRate">0%</div></div>
+</section>
+
+<section class="panes">
+  <div class="card"><h2>Outbound DMs <span id="live">idle</span></h2><div class="dms" id="dms"></div></div>
+  <div class="card"><h2>Your interview calendar</h2><div class="cal" id="cal"></div></div>
+</section>
+
+<section class="card profile">
+  <div>
+    <h2>Profile upgrade by Claude</h2>
+    <div class="ba">
+      <div class="before"><span class="tl">BEFORE</span><span id="hBefore"></span></div>
+      <div class="after"><span class="tl" style="color:var(--green)">AFTER</span><span id="hAfter"></span></div>
+    </div>
+  </div>
+  <div class="meter">
+    <div class="ring" id="ring"><span id="score">42</span></div>
+    <ul class="checks" id="checks">
+      <li>Headline rewritten for recruiters</li>
+      <li>About section with results</li>
+      <li>Skills &amp; keywords matched to jobs</li>
+      <li>Featured work &amp; banner added</li>
+    </ul>
+  </div>
+</section>
+
+<section class="bp">
+  <h2>Job hunt on LinkedIn, <em>inside Claude.</em></h2>
+  <p>8 steps · the same system you can set up yourself in an evening.</p>
+  <div class="steps" id="steps"></div>
+</section>
+
+<div class="cta">
+  <div>Comment <span class="k" id="kw">JOB</span> to get the setup</div>
+  <input id="kwIn" value="JOB" maxlength="12" aria-label="Comment keyword">
+</div>
+<p class="note">Demo with sample, fictional contacts and simulated results. Numbers are illustrative, not a promise of replies or offers.</p>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+const people = [
+ ["Ananya Rao","Talent Acquisition Lead","Northwind Foods","r"],["Vikram Mehta","Sales Director","BrightPath FMCG","h"],
+ ["Sara Khan","HR Business Partner","Orbit Retail","r"],["Rohit Verma","Regional Head","Kestrel Beverages","h"],
+ ["Priya Nair","Recruiter","Helio Consumer","r"],["Arjun Gill","VP Sales","Maple Foods","h"],
+ ["Neha Kapoor","Talent Partner","Zenith Distribution","r"],["Karan Bedi","National Sales Manager","Pure Harvest","h"],
+ ["Meera Iyer","Head of HR","Lumen Brands","r"],["Sandeep Joshi","Zonal Manager","Crest Snacks","h"],
+ ["Ishita Das","Recruiter","Aurora Retail","r"],["Manish Tyagi","Sales Head","Greenfield Agro","h"],
+ ["Divya Menon","Talent Acquisition","Solace Care","r"],["Harsh Vora","GM Sales","Tidal Drinks","h"],
+ ["Tanvi Shah","HR Manager","Quill Stationers","r"],["Amit Chopra","Area Sales Head","Nimbus Dairy","h"],
+ ["Pooja Bhatt","Recruiter","Vantage FMCG","r"],["Gaurav Sethi","Director, Sales","Ember Spices","h"],
+ ["Kavya Reddy","Talent Lead","Orchard Juices","r"],["Nikhil Anand","Business Head","Pioneer Foods","h"],
+ ["Rhea Malik","HRBP","Summit Consumer","r"],["Yash Taneja","Sales Director","Rivet Retail","h"],
+ ["Aditi Sood","Recruiter","Bloom Wellness","r"],["Dev Arora","VP Commercial","Atlas Beverages","h"]
+];
+const colors = ["#1f4fe0","#f0532d","#12a150","#8a4fe0","#d6307a","#0e8aa8","#c47a00"];
+const replies = ["Sure, send times","Let’s talk next week","Yes, book it in","Sounds interesting","Share your CV please","Open to a quick call"];
+const slots = ["10:00","11:30","1:00","2:30","4:15","9:30"];
+const captions = [
+ "Hi sir, I’m looking for a job. Do you have a vacancy in your team?",
+ "Hello, I’m actively exploring new opportunities. Could we connect about any openings?",
+ "Hi, I admire your team’s work. I’d love to contribute. Are you hiring?"
+];
+const stepsData = [
+ ["Connect LinkedIn","Link your account. Claude never posts without approval."],
+ ["Plug into Claude","Claude reads your profile, goals and caption."],
+ ["Upgrade your profile","Headline, about, skills and featured work rewritten."],
+ ["Find the right people","Recruiters and hiring managers in your target companies."],
+ ["Write each message","Your caption, personalised per person and company."],
+ ["Approve every DM","You review a batch. Nothing goes out unseen."],
+ ["Follow up on day 3","Polite nudge to anyone who hasn’t replied."],
+ ["Interview booked","Replies turn into slots on your calendar."]
+];
+
+// chips + steps
+captions.forEach(c => { const b = document.createElement("button"); b.className="chip"; b.textContent=c.slice(0,34)+"…"; b.onclick=()=>{$("#caption").value=c}; $("#chips").append(b); });
+stepsData.forEach((s,i)=>{ const d=document.createElement("div"); d.className="step"; d.innerHTML=`<span class="st">✔</span><span class="no">STEP 0${i+1}</span><b>${s[0]}</b><p>${s[1]}</p>`; $("#steps").append(d); });
+
+// calendar: next three weeks, Mon-Fri
+const calSlots = [];
+function buildCal(){
+  const c=$("#cal"); c.innerHTML=""; calSlots.length=0;
+  ["Mon","Tue","Wed","Thu","Fri"].forEach(d=>{const h=document.createElement("div");h.className="h";h.textContent=d;c.append(h)});
+  const t=new Date(); t.setDate(t.getDate()+((8-t.getDay())%7||7));
+  for(let w=0;w<3;w++)for(let d=0;d<5;d++){
+    const dt=new Date(t); dt.setDate(t.getDate()+w*7+d);
+    const cell=document.createElement("div"); cell.className="day"; cell.innerHTML=`<span class="n">${dt.getDate()}</span>`;
+    c.append(cell); calSlots.push(cell);
+  }
+}
+
+function counter(el,to,suffix=""){ const from=parseInt(el.dataset.v||0); el.dataset.v=to; const t0=performance.now();
+  (function f(t){const p=Math.min(1,(t-t0)/450);el.textContent=Math.round(from+(to-from)*p)+suffix;if(p<1)requestAnimationFrame(f)})(t0);}
+
+function headline(role){ return `${role} | Proven results in targets, team building & distribution | Open to work`; }
+function message(p,first){
+  const cap=$("#caption").value.trim(), me=$("#name").value.trim()||"me", role=$("#role").value.trim()||"this field";
+  const ctx = p[3]==="r" ? `I saw ${p[2]} is hiring. I’m a ${role} and would love to be considered.` : `I’d love to help ${p[2]} grow as a ${role}.`;
+  let body=cap.replace(/^(hi|hello|hey)\b[^,.!]*[,.!]\s*/i,""); body=body.charAt(0).toUpperCase()+body.slice(1);
+  return `Hi ${first}, ${body} ${ctx} My profile: linkedin.com/in/${me.toLowerCase().replace(/\s+/g,"-")}`;
+}
+
+let run=0;
+async function setStep(n){ document.querySelectorAll(".step").forEach((s,i)=>{s.classList.toggle("done",i<n);s.classList.toggle("on",i===n)}); }
+
+function resetAll(){
+  run++; $("#dms").innerHTML=""; buildCal();
+  ["sSent","sRep","sBook"].forEach(i=>{$("#"+i).dataset.v=0;$("#"+i).textContent=0}); $("#sRate").textContent="0%"; $("#bigN").textContent="0";
+  $("#score").textContent=42; $("#ring").style.setProperty("--p",42);
+  document.querySelectorAll("#checks li").forEach(l=>l.classList.remove("on"));
+  $("#hAfter").textContent="Waiting for Claude…"; setStep(-1); $("#live").textContent="idle"; $("#go").disabled=false;
+  $("#hBefore").textContent=$("#role").value+" looking for opportunities";
+}
+
+async function start(){
+  resetAll(); const me=run; $("#go").disabled=true; $("#live").textContent="● running";
+  const alive=()=>me===run;
+  const role=$("#role").value.trim()||"Professional";
+  // steps 0-1
+  for(let i=0;i<2;i++){ await setStep(i); await sleep(650); if(!alive())return; }
+  // profile upgrade (step 2)
+  await setStep(2); $("#hAfter").textContent=headline(role);
+  const lis=[...document.querySelectorAll("#checks li")]; let sc=42;
+  for(let i=0;i<4;i++){ lis[i].classList.add("on"); sc+=12; counter($("#score"),sc); $("#ring").style.setProperty("--p",sc); await sleep(550); if(!alive())return; }
+  // find people (3), write (4), approve (5)
+  for(let i=3;i<=5;i++){ await setStep(i); await sleep(700); if(!alive())return; }
+  // send DMs (step 5 stays on, then 6)
+  let sent=0,rep=0,book=0,slotIdx=0; const order=[...Array(people.length).keys()];
+  const planned=order.map(i=>({i,reply:(i*7+3)%10<5,book:(i*5+1)%10<3}));
+  const els=[];
+  for(const pl of planned){
+    if(!alive())return;
+    const p=people[pl.i], first=p[0].split(" ")[0];
+    const d=document.createElement("div"); d.className="dm";
+    d.innerHTML=`<div class="av" style="background:${colors[pl.i%colors.length]}">${p[0].split(" ").map(x=>x[0]).join("")}</div><div class="who"><b>${p[0]} <span style="font-weight:400;color:var(--muted)">· ${p[1]}</span></b><small></small></div><span class="tag">Sent</span>`;
+    d.querySelector("small").textContent=message(p,first);
+    $("#dms").prepend(d); els.push({d,pl,p}); sent++;
+    counter($("#sSent"),sent); $("#bigN").textContent=sent;
+    // seen + replies for earlier DMs
+    const e=els[els.length-3]; if(e){ await advance(e); }
+    $("#sRate").textContent=Math.round(rep/sent*100)+"%";
+    await sleep(380);
+  }
+  async function advance(e){
+    const tag=e.d.querySelector(".tag"); tag.className="tag seen"; tag.textContent="Seen";
+    if(!e.pl.reply) return; await sleep(250);
+    rep++; counter($("#sRep"),rep); e.d.classList.add("replied"); tag.className="tag replied"; tag.textContent="Replied";
+    e.d.querySelector("small").textContent="“"+replies[e.pl.i%replies.length]+"”";
+    if(e.pl.book && slotIdx<calSlots.length){
+      const cell=calSlots[(slotIdx*4+1)%calSlots.length]; slotIdx++;
+      const s=document.createElement("div"); s.className="slot"; s.textContent=slots[book%slots.length]; cell.append(s);
+      book++; counter($("#sBook"),book); e.d.classList.add("booked"); tag.className="tag booked"; tag.textContent="Booked ✔";
+    }
+  }
+  await setStep(6);
+  for(const e of els.slice(-3)){ if(!alive())return; await advance(e); await sleep(300); }
+  $("#sRate").textContent=Math.round(rep/sent*100)+"%";
+  await setStep(7); await sleep(500); await setStep(8); $("#live").textContent="✔ done"; $("#go").disabled=false;
+}
+
+$("#go").onclick=start; $("#reset").onclick=resetAll;
+$("#kwIn").oninput=e=>{$("#kw").textContent=(e.target.value||"JOB").toUpperCase()};
+$("#role").oninput=()=>{ if(!$("#go").disabled) $("#hBefore").textContent=$("#role").value+" looking for opportunities"; };
+resetAll();
+</script>
+</body>
+</html>

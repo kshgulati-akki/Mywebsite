@@ -93,9 +93,9 @@ textarea{min-height:76px;resize:vertical}
 <main class="wrap">
 
 <header>
-  <div class="eyebrow"><i></i>CLAUDE · LINKEDIN · JOB SEARCH</div>
-  <h1><span id="bigN">0</span> job DMs sent.<br>Here’s <mark>what they booked.</mark></h1>
-  <p class="sub">Type one caption. Claude finds the right people on LinkedIn, upgrades your profile, writes a personal message for each person, follows up, and fills your interview calendar.</p>
+  <div class="eyebrow"><i></i>JOBREACH · CLAUDE × LINKEDIN JOB-SEARCH AGENT</div>
+  <h1>Get interviews with your own <mark>Claude job agent.</mark></h1><span id="bigN" hidden>0</span>
+  <p class="sub">Claude upgrades your LinkedIn profile, helps you shortlist the right recruiters and hiring managers, and writes a personal message for each one. You review and send, so your account stays safe. Try the sample below: type a caption and press start.</p>
 </header>
 
 <section class="card composer">
@@ -115,15 +115,15 @@ textarea{min-height:76px;resize:vertical}
 </section>
 
 <section class="stats">
-  <div class="card stat"><div class="k">DMS SENT</div><div class="v" id="sSent">0</div></div>
-  <div class="card stat"><div class="k">REPLIES</div><div class="v o" id="sRep">0</div></div>
-  <div class="card stat"><div class="k">INTERVIEWS BOOKED</div><div class="v g" id="sBook">0</div></div>
+  <div class="card stat"><div class="k">MESSAGES DRAFTED</div><div class="v" id="sSent">0</div></div>
+  <div class="card stat"><div class="k">SAMPLE REPLIES</div><div class="v o" id="sRep">0</div></div>
+  <div class="card stat"><div class="k">SAMPLE INTERVIEWS</div><div class="v g" id="sBook">0</div></div>
   <div class="card stat"><div class="k">REPLY RATE</div><div class="v" id="sRate">0%</div></div>
 </section>
 
 <section class="panes">
-  <div class="card"><h2>Outbound DMs <span id="live">idle</span></h2><div class="dms" id="dms"></div></div>
-  <div class="card"><h2>Your interview calendar</h2><div class="cal" id="cal"></div></div>
+  <div class="card"><h2>Drafted messages <span id="live">idle</span></h2><div class="dms" id="dms"></div></div>
+  <div class="card"><h2>Sample interview calendar</h2><div class="cal" id="cal"></div></div>
 </section>
 
 <section class="card profile">
@@ -151,11 +151,22 @@ textarea{min-height:76px;resize:vertical}
   <div class="steps" id="steps"></div>
 </section>
 
+<section class="card" id="buy">
+  <h2>What you get</h2>
+  <ul class="checks" style="gap:8px">
+    <li class="on">JobReach Agent: ready-to-paste Claude instructions (works in a free Claude chat or Project)</li>
+    <li class="on">8 copy-paste prompts: profile, targets, messages, follow-ups, comments, weekly review</li>
+    <li class="on">Message formula: 4 short lines, no pitch, no links, easy out</li>
+    <li class="on">Safe-sending rules so your LinkedIn account isn’t restricted</li>
+  </ul>
+  <div class="actions" style="margin-top:12px"><a class="btn" id="buyBtn" href="#" style="text-decoration:none;text-align:center">Get the JobReach kit</a></div>
+  <p class="note" style="padding-bottom:0">No paid tools needed. It drafts, you send. It does not guarantee interviews or offers.</p>
+</section>
 <div class="cta">
   <div>Comment <span class="k" id="kw">JOB</span> to get the setup</div>
   <input id="kwIn" value="JOB" maxlength="12" aria-label="Comment keyword">
 </div>
-<p class="note">Demo with sample, fictional contacts and simulated results. Numbers are illustrative, not a promise of replies or offers.</p>
+<p class="note">Demo with sample, fictional contacts and simulated results. The agent drafts only; it does not access LinkedIn or send anything. Results are not guaranteed.</p>
 </main>
 
 <script>
@@ -185,14 +196,14 @@ const captions = [
  "Hi, I admire your team’s work. I’d love to contribute. Are you hiring?"
 ];
 const stepsData = [
- ["Connect LinkedIn","Link your account. Claude never posts without approval."],
- ["Plug into Claude","Claude reads your profile, goals and caption."],
+ ["Paste your profile","Copy your headline and About into Claude."],
+ ["Add the agent","Paste the JobReach instructions into a Claude Project."],
  ["Upgrade your profile","Headline, about, skills and featured work rewritten."],
- ["Find the right people","Recruiters and hiring managers in your target companies."],
- ["Write each message","Your caption, personalised per person and company."],
- ["Approve every DM","You review a batch. Nothing goes out unseen."],
- ["Follow up on day 3","Polite nudge to anyone who hasn’t replied."],
- ["Interview booked","Replies turn into slots on your calendar."]
+ ["Find the right people","Claude gives search strings. You shortlist recruiters and managers."],
+ ["Draft each message","Your caption, personalised per person and company."],
+ ["You review and send","You send from your own LinkedIn, 10 to 15 a day."],
+ ["Follow up","Claude drafts Day 4 and Day 9 notes that add something."],
+ ["Track and improve","Weekly review tells you what to change."]
 ];
 
 // chips + steps
@@ -255,7 +266,7 @@ async function start(){
     if(!alive())return;
     const p=people[pl.i], first=p[0].split(" ")[0];
     const d=document.createElement("div"); d.className="dm";
-    d.innerHTML=`<div class="av" style="background:${colors[pl.i%colors.length]}">${p[0].split(" ").map(x=>x[0]).join("")}</div><div class="who"><b>${p[0]} <span style="font-weight:400;color:var(--muted)">· ${p[1]}</span></b><small></small></div><span class="tag">Sent</span>`;
+    d.innerHTML=`<div class="av" style="background:${colors[pl.i%colors.length]}">${p[0].split(" ").map(x=>x[0]).join("")}</div><div class="who"><b>${p[0]} <span style="font-weight:400;color:var(--muted)">· ${p[1]}</span></b><small></small></div><span class="tag">Draft</span>`;
     d.querySelector("small").textContent=message(p,first);
     $("#dms").prepend(d); els.push({d,pl,p}); sent++;
     counter($("#sSent"),sent); $("#bigN").textContent=sent;
@@ -265,7 +276,7 @@ async function start(){
     await sleep(380);
   }
   async function advance(e){
-    const tag=e.d.querySelector(".tag"); tag.className="tag seen"; tag.textContent="Seen";
+    const tag=e.d.querySelector(".tag"); tag.className="tag seen"; tag.textContent="Sent by you";
     if(!e.pl.reply) return; await sleep(250);
     rep++; counter($("#sRep"),rep); e.d.classList.add("replied"); tag.className="tag replied"; tag.textContent="Replied";
     e.d.querySelector("small").textContent="“"+replies[e.pl.i%replies.length]+"”";

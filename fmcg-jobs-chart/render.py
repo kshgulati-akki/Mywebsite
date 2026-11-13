@@ -13,7 +13,7 @@ def share(t):  # t in year-index units, smooth between snapshots
     v = {n: doms[n][i]*(1-u) + doms[n][i+1]*u for n in names}
     s = sum(v.values()); return {n: v[n]/s*100 for n in names}
 def rank_of(v, n): return sorted(v, key=v.get, reverse=True).index(n) + 1
-FPS, SEG, HOLD = 30, 36, 60
+FPS, SEG, HOLD = 30, 60, 100
 ts = []
 for i in range(len(years)-1):
     ts += [i + k/SEG for k in range(SEG)]
@@ -25,8 +25,8 @@ def frame(t, pos):
     g.text((60, 142), "REINVENTED THEMSELVES", font=f("Inter-Bold.otf", 64), fill=ACC)
     g.text((60, 232), "Share of FMCG corporate openings by function, %", font=f("Inter-Regular.otf", 28), fill=MUTE)
     x0, x1, top, row = 380, 960, 330, 76
-    mx = 36
-    for gx in range(0, 36, 10):
+    mx = 42
+    for gx in range(0, 41, 10):
         X = x0 + (x1-x0)*gx/mx
         g.line([(X, top-10), (X, top+row*10)], fill="#E4E3EC", width=2)
         g.text((X, top-40), f"{gx}%", font=f("Inter-Regular.otf", 22), fill=MUTE, anchor="mm")
@@ -43,7 +43,7 @@ def frame(t, pos):
     p = t/(len(years)-1); g.line([(60, 1318), (1020, 1318)], fill="#DAD9E3", width=4)
     g.line([(60, 1318), (60+960*p, 1318)], fill=ACC, width=4)
     if t >= len(years)-1:
-        g.text((60, 1128), "Digital, Data & ESG roles grew 6x+; plant & field-heavy roles shrank.", font=f("Inter-SemiBold.otf", 26), fill=INK)
+        g.text((60, 1128), "Digital, Data & ESG now drive 1 in 3 FMCG hires. Plant & field roles shrank.", font=f("Inter-SemiBold.otf", 26), fill=INK)
     g.text((60, 1335-8), "Illustrative estimates, not official data.", font=f("Inter-Regular.otf", 17), fill=MUTE)
     return im
 out = f"{D}/frames"; os.makedirs(out, exist_ok=True)

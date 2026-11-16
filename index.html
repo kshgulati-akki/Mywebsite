@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Paan Box — Handcrafted Paan & Gift Boxes</title>
+  <meta name="description" content="The Paan Box: freshly handcrafted paan, from classic meetha to royal silver-leaf, in beautiful gift boxes for weddings, festivals and every celebration.">
+  <meta property="og:title" content="The Paan Box">
+  <meta property="og:description" content="Handcrafted paan & gift boxes for every celebration.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/leaf.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="nav" id="top">
+  <a href="#top" class="brand" aria-label="The Paan Box home">
+    <img src="assets/leaf.svg" alt="" width="28" height="28">
+    <span>The Paan Box</span>
+  </a>
+  <button class="menu-btn" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  <nav>
+    <a href="#collection">Collection</a>
+    <a href="#gifting">Gifting</a>
+    <a href="#about">Our Story</a>
+    <a href="#how">How to Order</a>
+    <a href="#contact">Contact</a>
+    <a class="btn btn-gold wa-link" data-msg="Hi! I'd like to order from The Paan Box." href="#">Order Now</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow">Handcrafted · Fresh · Made to order</p>
+      <h1>The art of paan,<br><em>beautifully boxed.</em></h1>
+      <p class="lead">Crisp betel leaves, rich gulkand, fragrant fillings — rolled fresh and presented in gift boxes made for celebrations.</p>
+      <div class="cta">
+        <a class="btn btn-gold wa-link" data-msg="Hi! I'd like to order a paan box." href="#">Order on WhatsApp</a>
+        <a class="btn btn-ghost" href="#collection">Explore the collection</a>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <img src="assets/leaf.svg" alt="">
+    </div>
+  </section>
+
+  <section class="strip">
+    <div><strong>100%</strong> fresh betel leaf</div>
+    <div><strong>Hand-rolled</strong> to order</div>
+    <div><strong>Gift-ready</strong> packaging</div>
+    <div><strong>Bulk &amp; event</strong> orders welcome</div>
+  </section>
+
+  <section id="collection" class="section">
+    <h2>The Collection</h2>
+    <p class="sub">Pick a single flavour or let us curate a box. Prices are placeholders — update in <code>script.js</code>.</p>
+
+    <div class="filters" role="tablist" aria-label="Filter products">
+      <button class="chip active" data-filter="all">All</button>
+      <button class="chip" data-filter="classic">Classic</button>
+      <button class="chip" data-filter="premium">Premium</button>
+      <button class="chip" data-filter="box">Gift Boxes</button>
+    </div>
+
+    <div class="grid" id="products"></div>
+  </section>
+
+  <section id="gifting" class="section dark">
+    <h2>Gifting for every occasion</h2>
+    <div class="cards">
+      <article><h3>Weddings</h3><p>Welcome boxes, mehendi &amp; sangeet counters, return gifts in custom colours.</p></article>
+      <article><h3>Festivals</h3><p>Diwali, Eid, Holi and Rakhi hampers with paan, dry fruits and sweets.</p></article>
+      <article><h3>Corporate</h3><p>Premium branded boxes for clients, teams and events — any quantity.</p></article>
+      <article><h3>Parties</h3><p>Live paan counter or pre-rolled platters to end a meal in style.</p></article>
+    </div>
+  </section>
+
+  <section id="about" class="section about">
+    <div>
+      <h2>Our story</h2>
+      <p>Paan has always been more than a mouth freshener — it's hospitality. The Paan Box brings that tradition to your table with carefully sourced leaves, house-made fillings and packaging worth gifting.</p>
+      <p>Every paan is rolled fresh on the day of delivery. No shortcuts, no artificial flavours — just the taste you remember.</p>
+    </div>
+    <ul class="facts">
+      <li>🍃 Sourced leaves, selected daily</li>
+      <li>🌹 House-made gulkand &amp; fillings</li>
+      <li>📦 Premium, reusable boxes</li>
+      <li>🚚 Local delivery available</li>
+    </ul>
+  </section>
+
+  <section id="how" class="section">
+    <h2>How to order</h2>
+    <ol class="steps">
+      <li><span>1</span><h3>Choose</h3><p>Browse the collection and note what you'd like.</p></li>
+      <li><span>2</span><h3>Message us</h3><p>Tap any “Order” button — your WhatsApp opens with the details filled in.</p></li>
+      <li><span>3</span><h3>Confirm</h3><p>We confirm price, date and delivery with you.</p></li>
+      <li><span>4</span><h3>Enjoy</h3><p>Fresh paan arrives rolled, boxed and ready.</p></li>
+    </ol>
+  </section>
+
+  <section class="section reviews">
+    <h2>Kind words</h2>
+    <div class="cards light">
+      <blockquote>“The gift boxes were the highlight of our wedding.” <cite>— Customer name</cite></blockquote>
+      <blockquote>“Fresh, fragrant and beautifully packed.” <cite>— Customer name</cite></blockquote>
+      <blockquote>“Ordered 100 boxes for Diwali. Flawless.” <cite>— Customer name</cite></blockquote>
+    </div>
+  </section>
+
+  <section id="contact" class="section contact">
+    <h2>Order or enquire</h2>
+    <p class="sub">Replace the details below with your real contact info.</p>
+    <div class="contact-grid">
+      <div>
+        <p><strong>WhatsApp / Phone</strong><br><a class="wa-link" data-msg="Hi!" href="#" id="phoneText">+91 00000 00000</a></p>
+        <p><strong>Email</strong><br><a href="mailto:hello@thepaanbox.com">hello@thepaanbox.com</a></p>
+        <p><strong>Address</strong><br>Your shop address, City</p>
+        <p><strong>Hours</strong><br>Daily · 11 am – 10 pm</p>
+        <p><a href="#" id="igLink" rel="noopener">Instagram</a></p>
+      </div>
+      <form id="enquiry" class="form">
+        <label>Name<input name="name" required></label>
+        <label>Occasion / Product<input name="what" placeholder="e.g. Wedding, 50 boxes"></label>
+        <label>Date needed<input name="date" type="date"></label>
+        <label>Message<textarea name="msg" rows="3"></textarea></label>
+        <button class="btn btn-gold" type="submit">Send via WhatsApp</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>© <span id="year"></span> The Paan Box. All rights reserved.</p>
+</footer>
+
+<a class="wa-float wa-link" data-msg="Hi! I'd like to know more about The Paan Box." href="#" aria-label="Chat on WhatsApp">💬</a>
+
+<script src="script.js"></script>
+</body>
+</html>
